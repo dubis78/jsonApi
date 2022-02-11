@@ -1,7 +1,7 @@
 const morgan = require("morgan");
 const express = require("express");
 const app = express();
-const routes = require("./routes/routes");
+const routes = require("./routes/router");
 
 // Ajustes
 app.set("port", 4000);
