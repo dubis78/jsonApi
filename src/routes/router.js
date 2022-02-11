@@ -1,4 +1,3 @@
-const { Serializer } = require(`jsonapi-serializer`);
 const axios = require(`axios`);
 const { Router } = require(`express`);
 const router = Router();
@@ -18,7 +17,6 @@ router.get(`/users/comments`, (req, res) => {
   id ? (queryWhere = `WHERE U.id = ${id}`) : (queryWhere = ``);
   mysqlConnection.query(query(0, queryWhere), (err, rows, fields) => {
     if (!err) {
-      console.log(query(0, queryWhere));
       res.json(data2json(rows));
     } else {
       console.log(err);

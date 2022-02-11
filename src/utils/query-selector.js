@@ -1,5 +1,4 @@
 const query = (index, extra) => {
-  console.log(index, extra);
   const queries = [
     `
     SELECT U.id, U.name, U.username, U.e_mail, 
@@ -15,7 +14,6 @@ const query = (index, extra) => {
     `,
     `SELECT * FROM users ${extra}`
   ];
-  console.log(queries[index]);
   return queries[index];
 };
 
