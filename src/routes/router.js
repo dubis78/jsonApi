@@ -3,7 +3,7 @@ const axios = require(`axios`);
 const { Router } = require(`express`);
 const router = Router();
 
-const mysqlConnection = require(`../db/connectionSqlDb`);
+const mysqlConnection = require(`../db/connectionSqlDb.js`);
 const data2json = require(`../utils/json-parser`);
 const query = require(`../utils/query-selector`);
 
