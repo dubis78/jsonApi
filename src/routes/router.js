@@ -5,6 +5,7 @@ const router = Router();
 const mysqlConnection = require(`../db/connectionSqlDb.js`);
 const data2json = require(`../utils/json-parser`);
 const query = require(`../utils/query-selector`);
+const jsonapiFormat = require(`../utils/jsonapi-serializer`);
 
 
 router.get("/", (req, res) => {
@@ -17,7 +18,8 @@ router.get(`/users/comments`, (req, res) => {
   id ? (queryWhere = `WHERE U.id = ${id}`) : (queryWhere = ``);
   mysqlConnection.query(query(0, queryWhere), (err, rows, fields) => {
     if (!err) {
-      res.json(data2json(rows));
+      const serialized = jsonapiFormat(data2json(rows),`users`);
+      res.json(serialized);
     } else {
       console.log(err);
     }
