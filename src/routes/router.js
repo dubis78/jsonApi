@@ -40,6 +40,18 @@ router.get(`/public-posts/some-comments`, (req, res) => {
   });
 });
 
+router.get(`/private-posts`, (req, res) => {
+  let queryWhere = ``;
+  mysqlConnection.query(query(2, queryWhere), (err, rows, fields) => {
+    if (!err) {
+      const serialized = rows;
+      res.json(serialized);
+    } else {
+      console.log(err);
+    }
+  });
+});
+
 router.post(`/register/`, (req, res) => {
   const { e_mail, password } = req.body;
   mysqlConnection.query(
