@@ -1,3 +1,12 @@
+const { Router } = require(`express`);
+const router = Router();
+
+const mysqlConnection = require(`../db/connectionSqlDb`);
+// const jsonConnection = require(`../db/connectionJsonDb`);
+const data2json = require(`../utils/json-parser`);
+const query = require(`../utils/query-selector`);
+const jsonapiFormat = require(`../utils/jsonapi-serializer`);
+
 router.get(`/`, async (req, res) => {
   res.json(`API REST Movies`);
 });
@@ -41,11 +50,15 @@ router.get(`/private-posts`, (req, res) => {
 
 router.get(`/post`, (req, res) => {
   const { id } = req.query;
+  const user_id = 0;
   let queryWhere = ``;
   if (true) {
     queryWhere = `WHERE P.id = ${id} AND P.is_published = 1`
   }
-  mysqlConnection.query(query(0, queryWhere), (err, rows, fields) => {
+  else if (true) {
+    queryWhere = `WHERE P.id = ${id} AND P.is_published = 0 AND user_id = ${user_id}`
+  }
+  mysqlConnection.query(query(3, queryWhere), (err, rows, fields) => {
       if (!err) {
         const serialized = jsonapiFormat(rows);
         console.log(serialized);
@@ -61,7 +74,7 @@ router.post(`/post`, (req, res) => {
   const {title, body, slug, is_published} = req.body;
   const user_id = 0;
   const str = `${user_id}, ${title}, ${body}, ${slug}, ${is_published}`;
-  mysqlConnection.query(query(3, str), (err, rows, fields) => {
+  mysqlConnection.query(query(4, str), (err, rows, fields) => {
       if (!err) {
         const serialized = jsonapiFormat(rows);
         console.log(serialized);
@@ -77,7 +90,7 @@ router.put(`/post`, (req, res) => {
   const {title, body, slug, is_published} = req.body;
   const user_id = 0;
   const { id } = req.query;
-  mysqlConnection.query(query(4, ``),[title,body,slug,is_published,user_id,id], (err, rows, fields) => {
+  mysqlConnection.query(query(5, ``),[title,body,slug,is_published,user_id,id], (err, rows, fields) => {
       if (!err) {
         const serialized = jsonapiFormat(rows);
         console.log(serialized);
@@ -92,7 +105,7 @@ router.put(`/post`, (req, res) => {
 router.delete(`/post`, (req, res) => {
   const user_id = 0;
   const { id } = req.query;
-  mysqlConnection.query(query(5, ``),[user_id,id], (err, rows, fields) => {
+  mysqlConnection.query(query(6, ``),[user_id,id], (err, rows, fields) => {
       if (!err) {
         const serialized = jsonapiFormat(rows);
         console.log(serialized);

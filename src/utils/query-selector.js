@@ -25,7 +25,8 @@ const query = (index, extra) => {
     FROM posts P WHERE P.is_published = 0 
     `,
     `
-    SELECT * FROM posts P ${extra}`,
+    SELECT * FROM posts P ${extra}
+    `,
     `INSERT INTO posts (user_id, title, body, slug, is_published) 
     VALUES(${extra});
     `,
