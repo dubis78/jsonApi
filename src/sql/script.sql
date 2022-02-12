@@ -7,7 +7,7 @@ USE b5rtan5c9glwe0qbklvo
 /*!----------------------------*/;
 /*!--DROP TABLE IF EXISTS `users`;*/;
 CREATE TABLE `users`  (
-  `id` int(5) NOT NULL,
+  `id` int(5) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(510) NOT NULL,
   `username` varchar(60) NOT NULL,
   `password` varchar(80) NULL DEFAULT NULL,
@@ -31,7 +31,7 @@ INSERT INTO `users` (`id`, `name`, `username`, `password`, `e_mail`) VALUES
 /*!----------------------------*/;
 /*!--DROP TABLE IF EXISTS `posts`;*/;
 CREATE TABLE `posts`  (
-  `id` int(5) NOT NULL,
+  `id` int(5) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `user_id` int(5) NOT NULL,
   `title` varchar(255) NOT NULL,
   `body` text NOT NULL,
@@ -57,7 +57,7 @@ INSERT INTO `posts` (`id`, `user_id`, `title`, `body`, `slug`, `is_published`, `
 /*!----------------------------*/;
 /*!--DROP TABLE IF EXISTS `momments`;*/;
 CREATE TABLE `comments`  (
-  `id` int(5) NOT NULL,
+  `id` int(5) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `user_id` int(5) NOT NULL,
   `post_id` int(5) NOT NULL,
   `body` text NOT NULL,

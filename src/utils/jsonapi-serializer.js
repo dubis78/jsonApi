@@ -1,8 +1,12 @@
 const { Serializer } = require(`jsonapi-serializer`);
 
-const jsonapiFormat = (data, type) => {
-  const [id, ...parentAtri] = Object.keys(data[0]),
-    childAtri = Object.keys(data[0][parentAtri[parentAtri.length - 1]][0]);
+const jsonapiFormat = (data, type, lastOne = true) => {
+  const [id, ...parentAtri] = Object.keys(data[0]);
+  let childDat;
+  lastOne
+    ? (childDat = data[0][parentAtri[parentAtri.length - 1]][0])
+    : (childDat = data[0][parentAtri[parentAtri.length - 2]][0]);
+  childAtri = Object.keys(childDat);
   return new Serializer(type, {
     attributes: parentAtri,
     child: {

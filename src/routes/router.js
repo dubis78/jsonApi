@@ -11,10 +11,16 @@ router.get(`/`, async (req, res) => {
   res.json(`API REST Movies`);
 });
 
-router.get(`/public-posts/some-comments`, (req, res) => {
+router.get(`/public-posts-some-comments`, (req, res) => {
   mysqlConnection.query(query(1, ``), (err, rows, fields) => {
     if (!err) {
-      const serialized = jsonapiFormat(data2json(rows), `posts`);
+      console.log(data2json(rows)[0].comments);
+      const filtData = data2json(rows).map((element) => {
+        element.tolt_comments = element.comments.length;
+        element.comments.splice(5);
+        return element;
+      });
+      const serialized = jsonapiFormat(filtData, `posts`, false);
       res.json(serialized);
     } else {
       console.log(err);
@@ -38,29 +44,27 @@ router.get(`/post`, (req, res) => {
   const user_id = 0;
   let queryWhere = ``;
   if (user_id) {
-    queryWhere = `WHERE P.id = ${id} AND P.is_published = 0 AND user_id = ${user_id}`
-  }
-  else if (true) {
-    queryWhere = `WHERE P.id = ${id} AND P.is_published = 1`
+    queryWhere = `WHERE P.id = ${id} AND P.is_published = 0 AND user_id = ${user_id}`;
+  } else if (true) {
+    queryWhere = `WHERE P.id = ${id} AND P.is_published = 1`;
   }
 
   mysqlConnection.query(query(3, queryWhere), (err, rows, fields) => {
-      if (!err) {
-        const serialized = jsonapiFormat(rows);
-        console.log(serialized);
-        res.json(rows);
-      } else {
-        console.log(err);
-      }
+    if (!err) {
+      const serialized = jsonapiFormat(rows);
+      console.log(serialized);
+      res.json(rows);
+    } else {
+      console.log(err);
     }
-  );
+  });
 });
 
 router.post(`/post`, (req, res) => {
-  const {title, body, slug, is_published} = req.body;
+  const { title, body, slug, is_published } = req.body;
   const user_id = 0;
   const str = `${user_id}, ${title}, ${body}, ${slug}, ${is_published}`;
-  if (user_id) { 
+  if (user_id) {
     mysqlConnection.query(query(4, str), (err, rows, fields) => {
       if (!err) {
         const serialized = jsonapiFormat(rows);
@@ -70,37 +74,39 @@ router.post(`/post`, (req, res) => {
         console.log(err);
       }
     });
-  }
-  else {
+  } else {
     res.code(401).json(`unauthorized`);
   }
 });
 
 router.put(`/post`, (req, res) => {
-  const {title, body, slug, is_published} = req.body;
+  const { title, body, slug, is_published } = req.body;
   const user_id = 0;
   const { id } = req.query;
   if (user_id) {
-    mysqlConnection.query(query(5, ``),[title,body,slug,is_published,user_id,id], (err, rows, fields) => {
-      if (!err) {
-        const serialized = jsonapiFormat(rows);
-        console.log(serialized);
-        res.json(rows);
-      } else {
-        console.log(err);
+    mysqlConnection.query(
+      query(5, ``),
+      [title, body, slug, is_published, user_id, id],
+      (err, rows, fields) => {
+        if (!err) {
+          const serialized = jsonapiFormat(rows);
+          console.log(serialized);
+          res.json(rows);
+        } else {
+          console.log(err);
+        }
       }
-    });
-  }
-  else {
+    );
+  } else {
     res.code(401).json(`unauthorized`);
-  } 
+  }
 });
 
 router.delete(`/post`, (req, res) => {
   const user_id = 0;
   const { id } = req.query;
   if (user_id) {
-    mysqlConnection.query(query(6, ``),[user_id,id], (err, rows, fields) => {
+    mysqlConnection.query(query(6, ``), [user_id, id], (err, rows, fields) => {
       if (!err) {
         const serialized = jsonapiFormat(rows);
         console.log(serialized);
@@ -109,16 +115,15 @@ router.delete(`/post`, (req, res) => {
         console.log(err);
       }
     });
-  }
-  else {
+  } else {
     res.code(401).json(`unauthorized`);
-  } 
+  }
 });
 
 router.get(`/users/comments`, (req, res) => {
   const { id } = req.query;
   let queryWhere = ``;
-  id ? (queryWhere = `WHERE U.id = ${id}`) : (queryWhere = ``);
+  id ? queryWhere = `WHERE U.id = ${id}` : queryWhere = ``;
   mysqlConnection.query(query(0, queryWhere), (err, rows, fields) => {
     if (!err) {
       const serialized = jsonapiFormat(data2json(rows), `users`);
@@ -134,10 +139,9 @@ router.get(`/comments-per-post`, (req, res) => {
   const user_id = 0;
   let queryWhere = ``;
   if (user_id) {
-    queryWhere = `WHERE C.id = ${id} AND C.is_published = 0 AND user_id = ${user_id}`
-  }
-  else if (true) {
-    queryWhere = `WHERE C.id = ${id} AND C.is_published = 1`
+    queryWhere = `WHERE C.id = ${id} AND C.is_published = 0 AND user_id = ${user_id}`;
+  } else if (true) {
+    queryWhere = `WHERE C.id = ${id} AND C.is_published = 1`;
   }
   mysqlConnection.query(query(7, ``), (err, rows, fields) => {
     if (!err) {
@@ -150,7 +154,7 @@ router.get(`/comments-per-post`, (req, res) => {
 });
 
 router.post(`/comment`, (req, res) => {
-  const {body, is_published} = req.body;
+  const { body, is_published } = req.body;
   const { post_id } = req.query;
   const user_id = 0;
   if (user_id) {
@@ -164,37 +168,39 @@ router.post(`/comment`, (req, res) => {
         console.log(err);
       }
     });
-  }
-  else {
+  } else {
     res.code(401).json(`unauthorized`);
-  }  
+  }
 });
 
 router.put(`/comment`, (req, res) => {
-  const {body, is_published} = req.body;
-  const user_id = 0;  
+  const { body, is_published } = req.body;
+  const user_id = 0;
   const { post_id } = req.query;
   if (user_id) {
-    mysqlConnection.query(query(5, ``),[user_id,user_id,body,is_published,user_id], (err, rows, fields) => {
-      if (!err) {
-        const serialized = jsonapiFormat(rows);
-        console.log(serialized);
-        res.json(rows);
-      } else {
-        console.log(err);
+    mysqlConnection.query(
+      query(5, ``),
+      [user_id, user_id, body, is_published, user_id],
+      (err, rows, fields) => {
+        if (!err) {
+          const serialized = jsonapiFormat(rows);
+          console.log(serialized);
+          res.json(rows);
+        } else {
+          console.log(err);
+        }
       }
-    });
-  }
-  else {
+    );
+  } else {
     res.code(401).json(`unauthorized`);
-  }  
+  }
 });
 
 router.delete(`/comment`, (req, res) => {
   const user_id = 0;
   const { id } = req.query;
   if (user_id) {
-    mysqlConnection.query(query(6, ``),[user_id,id], (err, rows, fields) => {
+    mysqlConnection.query(query(6, ``), [user_id, id], (err, rows, fields) => {
       if (!err) {
         const serialized = jsonapiFormat(rows);
         console.log(serialized);
@@ -203,10 +209,9 @@ router.delete(`/comment`, (req, res) => {
         console.log(err);
       }
     });
-  }
-  else {
+  } else {
     res.code(401).json(`unauthorized`);
-  } 
+  }
 });
 
 router.post(`/register/`, (req, res) => {
