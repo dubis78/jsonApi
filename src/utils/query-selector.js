@@ -24,7 +24,19 @@ const query = (index, extra) => {
     SELECT P.id, P.title, P.body, P.slug, P.created_at, P.updated_at 
     FROM posts P WHERE P.is_published = 0 
     `,
-    `SELECT * FROM users ${extra}`
+    `
+    SELECT * FROM posts P ${extra}`,
+    `INSERT INTO posts (user_id, title, body, slug, is_published) 
+    VALUES(${extra});
+    `,
+    `
+    UPDATE post SET title = ?, body = ?, slug = ?, is_published = ? 
+    WHERE user_id = ? AND id = ?
+    `,
+    `
+    DELETE FrOM posts
+    WHERE user_id = ? AND id = ?
+    `,
   ];
   return queries[index];
 };

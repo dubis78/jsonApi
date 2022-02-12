@@ -1,16 +1,7 @@
-const axios = require(`axios`);
-const { Router } = require(`express`);
-const router = Router();
-
-const mysqlConnection = require(`../db/connectionSqlDb.js`);
-const data2json = require(`../utils/json-parser`);
-const query = require(`../utils/query-selector`);
-const jsonapiFormat = require(`../utils/jsonapi-serializer`);
-
-
-router.get("/", (req, res) => {
-  res.json("API");
+router.get(`/`, async (req, res) => {
+  res.json(`API REST Movies`);
 });
+
 
 router.get(`/users/comments`, (req, res) => {
   const { id } = req.query;
@@ -18,7 +9,7 @@ router.get(`/users/comments`, (req, res) => {
   id ? (queryWhere = `WHERE U.id = ${id}`) : (queryWhere = ``);
   mysqlConnection.query(query(0, queryWhere), (err, rows, fields) => {
     if (!err) {
-      const serialized = jsonapiFormat(data2json(rows),`users`);
+      const serialized = jsonapiFormat(data2json(rows), `users`);
       res.json(serialized);
     } else {
       console.log(err);
@@ -27,10 +18,7 @@ router.get(`/users/comments`, (req, res) => {
 });
 
 router.get(`/public-posts/some-comments`, (req, res) => {
-  const { id } = req.query;
-  let queryWhere = ``;
-  id ? (queryWhere = `WHERE U.id = ${id}`) : (queryWhere = ``);
-  mysqlConnection.query(query(1, queryWhere), (err, rows, fields) => {
+  mysqlConnection.query(query(1, ``), (err, rows, fields) => {
     if (!err) {
       const serialized = jsonapiFormat(data2json(rows), `posts`);
       res.json(serialized);
@@ -41,8 +29,7 @@ router.get(`/public-posts/some-comments`, (req, res) => {
 });
 
 router.get(`/private-posts`, (req, res) => {
-  let queryWhere = ``;
-  mysqlConnection.query(query(2, queryWhere), (err, rows, fields) => {
+  mysqlConnection.query(query(2, ``), (err, rows, fields) => {
     if (!err) {
       const serialized = rows;
       res.json(serialized);
@@ -50,6 +37,71 @@ router.get(`/private-posts`, (req, res) => {
       console.log(err);
     }
   });
+});
+
+router.get(`/post`, (req, res) => {
+  const { id } = req.query;
+  let queryWhere = ``;
+  if (true) {
+    queryWhere = `WHERE P.id = ${id} AND P.is_published = 1`
+  }
+  mysqlConnection.query(query(0, queryWhere), (err, rows, fields) => {
+      if (!err) {
+        const serialized = jsonapiFormat(rows);
+        console.log(serialized);
+        res.json(rows);
+      } else {
+        console.log(err);
+      }
+    }
+  );
+});
+
+router.post(`/post`, (req, res) => {
+  const {title, body, slug, is_published} = req.body;
+  const user_id = 0;
+  const str = `${user_id}, ${title}, ${body}, ${slug}, ${is_published}`;
+  mysqlConnection.query(query(3, str), (err, rows, fields) => {
+      if (!err) {
+        const serialized = jsonapiFormat(rows);
+        console.log(serialized);
+        res.json(rows);
+      } else {
+        console.log(err);
+      }
+    }
+  );
+});
+
+router.put(`/post`, (req, res) => {
+  const {title, body, slug, is_published} = req.body;
+  const user_id = 0;
+  const { id } = req.query;
+  mysqlConnection.query(query(4, ``),[title,body,slug,is_published,user_id,id], (err, rows, fields) => {
+      if (!err) {
+        const serialized = jsonapiFormat(rows);
+        console.log(serialized);
+        res.json(rows);
+      } else {
+        console.log(err);
+      }
+    }
+  );
+});
+
+router.delete(`/post`, (req, res) => {
+  const user_id = 0;
+  const { id } = req.query;
+  mysqlConnection.query(query(5, ``),[user_id,id], (err, rows, fields) => {
+      if (!err) {
+        const serialized = jsonapiFormat(rows);
+        console.log(serialized);
+        res.json(rows);
+      } else {
+        console.log(err);
+      }
+    }
+  );
 });
 
 router.post(`/register/`, (req, res) => {
