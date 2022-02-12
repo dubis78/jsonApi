@@ -26,6 +26,20 @@ router.get(`/users/comments`, (req, res) => {
   });
 });
 
+router.get(`/public-posts/some-comments`, (req, res) => {
+  const { id } = req.query;
+  let queryWhere = ``;
+  id ? (queryWhere = `WHERE U.id = ${id}`) : (queryWhere = ``);
+  mysqlConnection.query(query(1, queryWhere), (err, rows, fields) => {
+    if (!err) {
+      const serialized = jsonapiFormat(data2json(rows), `posts`);
+      res.json(serialized);
+    } else {
+      console.log(err);
+    }
+  });
+});
+
 router.post(`/register/`, (req, res) => {
   const { e_mail, password } = req.body;
   mysqlConnection.query(
