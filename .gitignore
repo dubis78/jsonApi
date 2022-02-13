@@ -1,5 +1,7 @@
 # dependencies
 /node_modules
+/front_end/node_modules
+/back_end/node_modules
 
 # production
 /build
@@ -10,3 +12,4 @@
 .env.development.local
 .env.test.local
 .env.production.local
+
