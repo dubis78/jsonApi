@@ -6,56 +6,67 @@ const mysqlConnection = require(`../db/connectionSqlDb`);
 const data2json = require(`../utils/json-parser`);
 const query = require(`../utils/query-selector`);
 const jsonapiFormat = require(`../utils/jsonapi-serializer`);
+const urlGenerator = require(`../utils/url-generator`);
 
 router.get(`/`, async (req, res) => {
   res.json(`API REST Movies`);
 });
 
 router.get(`/public-posts-some-comments`, (req, res) => {
+  let url = {};
+  url.self = urlGenerator(req);
   mysqlConnection.query(query(1, ``), (err, rows, fields) => {
     if (!err) {
-      console.log(data2json(rows)[0].comments);
       const filtData = data2json(rows).map((element) => {
         element.tolt_comments = element.comments.length;
         element.comments.splice(5);
         return element;
       });
-      const serialized = jsonapiFormat(filtData, `posts`, false);
+      const serialized = jsonapiFormat(
+        filtData,
+        `posts`,
+        false,
+        null,
+        true,
+        url
+      );
       res.json(serialized);
     } else {
-      console.log(err);
+      res.status(500).json(err.code);
     }
   });
 });
 
 router.get(`/private-posts`, (req, res) => {
+  let url = {};
+  url.self = urlGenerator(req);
   mysqlConnection.query(query(2, ``), (err, rows, fields) => {
     if (!err) {
-      const serialized = rows;
+      const serialized = jsonapiFormat(rows, `posts`, false, null, null, url);
       res.json(serialized);
     } else {
-      console.log(err);
+      res.status(500).json(err.code);
     }
   });
 });
 
 router.get(`/post`, (req, res) => {
+  let url = {};
+  url.self = urlGenerator(req);
   const { id } = req.query;
   const user_id = 0;
   let queryWhere = ``;
   if (user_id) {
-    queryWhere = `WHERE P.id = ${id} AND P.is_published = 0 AND user_id = ${user_id}`;
-  } else if (true) {
-    queryWhere = `WHERE P.id = ${id} AND P.is_published = 1`;
+    queryWhere = `WHERE C.id = ${id} AND C.is_published = 0 AND C.user_id = ${user_id}`;
+  } else {
+    queryWhere = `WHERE C.id = ${id} AND C.is_published = 1`;
   }
-
   mysqlConnection.query(query(3, queryWhere), (err, rows, fields) => {
     if (!err) {
-      const serialized = jsonapiFormat(rows);
-      console.log(serialized);
-      res.json(rows);
+      const serialized = jsonapiFormat(rows, `posts`, false, null, null, url);
+      res.json(serialized);
     } else {
-      console.log(err);
+      res.status(500).json(err.code);
     }
   });
 });
@@ -67,11 +78,9 @@ router.post(`/post`, (req, res) => {
   if (user_id) {
     mysqlConnection.query(query(4, str), (err, rows, fields) => {
       if (!err) {
-        const serialized = jsonapiFormat(rows);
-        console.log(serialized);
         res.code(201).json(rows);
       } else {
-        console.log(err);
+        res.status(500).json(err.code);
       }
     });
   } else {
@@ -89,11 +98,9 @@ router.put(`/post`, (req, res) => {
       [title, body, slug, is_published, user_id, id],
       (err, rows, fields) => {
         if (!err) {
-          const serialized = jsonapiFormat(rows);
-          console.log(serialized);
-          res.json(rows);
+          res.code(204).json(rows);
         } else {
-          console.log(err);
+          res.status(500).json(err.code);
         }
       }
     );
@@ -108,11 +115,9 @@ router.delete(`/post`, (req, res) => {
   if (user_id) {
     mysqlConnection.query(query(6, ``), [user_id, id], (err, rows, fields) => {
       if (!err) {
-        const serialized = jsonapiFormat(rows);
-        console.log(serialized);
-        res.json(rows);
+        res.code(204).json(rows);
       } else {
-        console.log(err);
+        res.status(500).json(err.code);
       }
     });
   } else {
@@ -120,35 +125,52 @@ router.delete(`/post`, (req, res) => {
   }
 });
 
-router.get(`/users/comments`, (req, res) => {
+router.get(`/comments-per-user`, (req, res) => {
+  let url = {};
+  url.self = urlGenerator(req);
   const { id } = req.query;
+  const user_id = 0;
   let queryWhere = ``;
-  id ? queryWhere = `WHERE U.id = ${id}` : queryWhere = ``;
+  id ? (queryWhere = `WHERE U.id = ${id}`) : (queryWhere = ``);
   mysqlConnection.query(query(0, queryWhere), (err, rows, fields) => {
     if (!err) {
-      const serialized = jsonapiFormat(data2json(rows), `users`);
+      const serialized = jsonapiFormat(
+        data2json(rows),
+        `users`,
+        true,
+        null,
+        true,
+        url
+      );
       res.json(serialized);
     } else {
-      console.log(err);
+      res.status(500).json(err.code);
     }
   });
 });
 
 router.get(`/comments-per-post`, (req, res) => {
+  let url = {};
+  url.self = urlGenerator(req);
   const { id } = req.query;
   const user_id = 0;
   let queryWhere = ``;
-  if (user_id) {
-    queryWhere = `WHERE C.id = ${id} AND C.is_published = 0 AND user_id = ${user_id}`;
-  } else if (true) {
-    queryWhere = `WHERE C.id = ${id} AND C.is_published = 1`;
-  }
-  mysqlConnection.query(query(7, ``), (err, rows, fields) => {
+  id ? (queryWhere = `WHERE C.id = ${id}`) : (queryWhere = ``);
+  console.log(query(1, queryWhere));
+  mysqlConnection.query(query(1, queryWhere), (err, rows, fields) => {
     if (!err) {
-      const serialized = rows;
+      console.log(data2json(rows));
+      const serialized = jsonapiFormat(
+        data2json(rows),
+        `posts`,
+        true,
+        null,
+        true,
+        url
+      );
       res.json(serialized);
     } else {
-      console.log(err);
+      res.status(500).json(err.code);
     }
   });
 });
@@ -159,13 +181,11 @@ router.post(`/comment`, (req, res) => {
   const user_id = 0;
   if (user_id) {
     const str = `${user_id}, ${post_id}, ${body}, ${is_published}`;
-    mysqlConnection.query(query(4, str), (err, rows, fields) => {
+    mysqlConnection.query(query(8, str), (err, rows, fields) => {
       if (!err) {
-        const serialized = jsonapiFormat(rows);
-        console.log(serialized);
         res.code(201).json(rows);
       } else {
-        console.log(err);
+        res.status(500).json(err.code);
       }
     });
   } else {
@@ -176,18 +196,16 @@ router.post(`/comment`, (req, res) => {
 router.put(`/comment`, (req, res) => {
   const { body, is_published } = req.body;
   const user_id = 0;
-  const { post_id } = req.query;
+  const { id } = req.query;
   if (user_id) {
     mysqlConnection.query(
-      query(5, ``),
-      [user_id, user_id, body, is_published, user_id],
+      query(9, ``),
+      [body, is_published, user_id, id],
       (err, rows, fields) => {
         if (!err) {
-          const serialized = jsonapiFormat(rows);
-          console.log(serialized);
-          res.json(rows);
+          res.code(204).json(rows);
         } else {
-          console.log(err);
+          res.status(500).json(err.code);
         }
       }
     );
@@ -200,13 +218,11 @@ router.delete(`/comment`, (req, res) => {
   const user_id = 0;
   const { id } = req.query;
   if (user_id) {
-    mysqlConnection.query(query(6, ``), [user_id, id], (err, rows, fields) => {
+    mysqlConnection.query(query(10, ``), [user_id, id], (err, rows, fields) => {
       if (!err) {
-        const serialized = jsonapiFormat(rows);
-        console.log(serialized);
-        res.json(rows);
+        res.code(204).json(rows);
       } else {
-        console.log(err);
+        res.status(500).json(err.code);
       }
     });
   } else {
@@ -247,5 +263,13 @@ router.post(`/login/`, (req, res) => {
     }
   );
 });
+
+function paginate(page = 1, pageSize = 5, records) {
+  const recordsPage = records.slice(pageSize * (page - 1), pageSize * page);
+  if (recordsPage.length > 0) {
+    return recordsPage;
+  }
+  return "No Page";
+}
 
 module.exports = router;

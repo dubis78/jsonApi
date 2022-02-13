@@ -17,6 +17,6 @@ app.use("/api", routes);
 
 // Ajustes del servidor
 app.listen(app.get("port"), () => {
-  console.log(`Server running on port ${app.get("port")}`);
+  console.log(`Server running on port ${app.get("port")}`);  
 });
 dotenv.config();
