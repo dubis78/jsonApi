@@ -6,10 +6,10 @@ import { useAddPostMutation } from "./_api";
 import { useState } from "react";
 
 const Add = () => {
-    const today = new Date().toLocaleDateString('en-CA');
+    // const today = new Date().toLocaleDateString('en-CA');
     const history = useHistory();
 
-    const [post, setpost] = useState({ id: "", title: "", content: "", published: true, date: today });
+    const [post, setpost] = useState({ id: "", title: "", body: "", is_published: true});
     const [addPost, { isLoading: updating, isSuccess: saved }] = useAddPostMutation();
 
     const savePost = (e) => {
@@ -20,7 +20,7 @@ const Add = () => {
 
     const inputHandler = (e) => {
         const { name, value, checked } = e.target;
-        let theValue = name === "published" ? checked : value
+        let theValue = name === "is_published" ? checked : value
         setpost({ ...post, [name]: theValue });
     };
 
@@ -37,11 +37,11 @@ const Add = () => {
             <label>Title</label>
             <input onChange={inputHandler} name="title" id="title" type="text" className="form-control" required />
 
-            <label>Content</label>
-            <textarea onChange={inputHandler} name="content" id="content" className="form-control" rows="10"></textarea>
+            <label>Body</label>
+            <textarea onChange={inputHandler} name="body" id="body" className="form-control" rows="10"></textarea>
 
-            <input onChange={inputHandler} name="published" id="published" type="checkbox" className="form-checkbox" checked={post.published} />
-            <label htmlFor="published">Publishd</label>
+            <input onChange={inputHandler} name="is_published" id="is_published" type="checkbox" className="form-checkbox" checked={post.is_published} />
+            <label htmlFor="is_published">Publishd</label>
 
             <footer className="form-footer">
                 <Link className="btn btn-default" to="/">Cancel</Link>

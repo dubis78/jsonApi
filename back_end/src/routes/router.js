@@ -62,7 +62,7 @@ router.get(`/posts/:id`, (req, res) => {
   let url = {};
   url.self = urlGenerator(req);
   const { id } = req.params;
-  const user_id = 0;
+  const user_id = 1;
   let queryWhere = ``;
   if (user_id) {
     queryWhere = `WHERE P.id = ${id} AND P.is_published = 0 AND P.user_id = ${user_id}`;
@@ -85,7 +85,7 @@ router.get(`/posts/:id`, (req, res) => {
 
 router.post(`/posts`, (req, res) => {
   const { title, body, slug, is_published } = req.body;
-  const user_id = 0;
+  const user_id = 1;
   const str = `${user_id}, ${title}, ${body}, ${slug}, ${is_published}`;
   if (user_id) {
     mysqlConnection.query(query(4, str), (err, rows, fields) => {
@@ -102,7 +102,7 @@ router.post(`/posts`, (req, res) => {
 
 router.put(`/posts/:id`, (req, res) => {
   const { title, body, slug, is_published } = req.body;
-  const user_id = 0;
+  const user_id = 1;
   const { id } = req.params;
   if (user_id) {
     mysqlConnection.query(
@@ -122,7 +122,7 @@ router.put(`/posts/:id`, (req, res) => {
 });
 
 router.delete(`/posts/:id`, (req, res) => {
-  const user_id = 0;
+  const user_id = 1;
   const { id } = req.params;
   if (user_id) {
     mysqlConnection.query(query(6, ``), [user_id, id], (err, rows, fields) => {
@@ -141,7 +141,7 @@ router.get(`/comments-per-user/:id`, (req, res) => {
   let url = {};
   url.self = urlGenerator(req);
   const { id } = req.params;
-  const user_id = 0;
+  const user_id = 1;
   let queryWhere = ``;
   id ? (queryWhere = `WHERE U.id = ${id}`) : (queryWhere = ``);
   mysqlConnection.query(query(0, queryWhere), (err, rows, fields) => {
@@ -169,7 +169,7 @@ router.get(`/comments-per-post/:id`, (req, res) => {
   let url = {};
   url.self = urlGenerator(req);
   const { id } = req.params;
-  const user_id = 0;
+  const user_id = 1;
   let queryWhere = ``;
   id ? (queryWhere = `WHERE C.id = ${id}`) : (queryWhere = ``);
   console.log(query(1, queryWhere));
@@ -197,7 +197,7 @@ router.get(`/comments-per-post/:id`, (req, res) => {
 router.post(`/comments`, (req, res) => {
   const { body, is_published } = req.body;
   const { post_id } = req.query;
-  const user_id = 0;
+  const user_id = 1;
   if (user_id) {
     const str = `${user_id}, ${post_id}, ${body}, ${is_published}`;
     mysqlConnection.query(query(8, str), (err, rows, fields) => {
@@ -214,7 +214,7 @@ router.post(`/comments`, (req, res) => {
 
 router.put(`/comments/:id`, (req, res) => {
   const { body, is_published } = req.body;
-  const user_id = 0;
+  const user_id = 1;
   const { id } = req.params;
   if (user_id) {
     mysqlConnection.query(
@@ -234,7 +234,7 @@ router.put(`/comments/:id`, (req, res) => {
 });
 
 router.delete(`/comments/:id`, (req, res) => {
-  const user_id = 0;
+  const user_id = 1;
   const { id } = req.params;
   if (user_id) {
     mysqlConnection.query(query(10, ``), [user_id, id], (err, rows, fields) => {

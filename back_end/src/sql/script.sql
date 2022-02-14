@@ -35,7 +35,7 @@ CREATE TABLE `posts`  (
   `user_id` int(5) NOT NULL,
   `title` varchar(255) NOT NULL,
   `body` text NOT NULL,
-  `slug` varchar(255) NOT NULL,
+  `slug` varchar(255) NULL,
   `is_published` BOOLEAN DEFAULT FALSE,
   `created_at` timestamp(0) NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP(0),
   `updated_at` timestamp(0) NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(0),
