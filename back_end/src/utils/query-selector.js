@@ -30,8 +30,8 @@ const query = (index, extra) => {
     FROM posts P ${extra}
     `,
     `
-    INSERT INTO comments (user_id, title, body, slug, is_published) 
-    VALUES(${extra});
+    INSERT INTO posts (id, user_id, title, body, slug, is_published, created_at, updated_at) 
+    VALUES(NULL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, NULL);
     `,
     `
     UPDATE posts SET title = ?, body = ?, slug = ?, is_published = ? 

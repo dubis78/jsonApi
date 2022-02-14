@@ -3,7 +3,7 @@ const data2json = (data) => {
   data2json.map((element) => {
     element.comments = JSON.parse(element.comments);
   });
-  return data2json[0];
+  return data2json;
 };
 
 module.exports = data2json;

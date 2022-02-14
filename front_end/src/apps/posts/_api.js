@@ -33,11 +33,11 @@ export const postsApi = createApi({
     }),
     editPost: builder.mutation({
       query(data) {
-        const { id, ...body } = data;
+        const { id, body } = data;
         return {
           url: `posts/${id}/`,
           method: "PUT",
-          body
+          body: body
         };
       },
       invalidatesTags: (result, error, { id }) => [{ type: "Posts", id }]

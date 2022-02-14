@@ -3,7 +3,6 @@ import { useGetPostQuery } from "./_api";
 
 const Item = ({ match }) => {
   const { data } = useGetPostQuery(match.params.id);
-  console.log(`holis`, match, data);
   return (
     <article className="post">
       {data ? (
@@ -26,23 +25,3 @@ const Item = ({ match }) => {
 
 export default Item;
 
-// return <article className="post">      {data
-//   ? () => {
-//       // const { attributes } = data;
-//       console.log(`holis inside article`, data);
-//       return (
-//         <>
-//           <h2>{data.data.attributes.title}</h2>
-//           <p>{data.data.body}</p>
-//           <footer>
-//             {/* {item.is_published ?
-//           <time>{new Date(item.updated).toLocaleDateString()}</time>
-//           :
-//           <span>Draft</span>
-//           } */}
-//             <Link to={`/posts`}>Return</Link>
-//           </footer>
-//         </>
-//       );
-//     }
-//   : null}</article>;

@@ -14,7 +14,7 @@ const List = () => {
         ? data.data.map(({ id, attributes }) => (
             <Items item={attributes} key={id} uid={id} />
           ))
-        : null}
+        : console.log("test")}
     </main>
   );
 };

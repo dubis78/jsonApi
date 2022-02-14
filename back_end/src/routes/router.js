@@ -65,7 +65,7 @@ router.get(`/posts/:id`, (req, res) => {
   const user_id = 1;
   let queryWhere = ``;
   if (user_id) {
-    queryWhere = `WHERE P.id = ${id} AND P.is_published = 0 AND P.user_id = ${user_id}`;
+    queryWhere = `WHERE P.id = ${id} AND P.user_id = ${user_id}`;
   } else {
     queryWhere = `WHERE P.id = ${id} AND P.is_published = 1`;
   }
@@ -84,30 +84,34 @@ router.get(`/posts/:id`, (req, res) => {
 });
 
 router.post(`/posts`, (req, res) => {
-  const { title, body, slug, is_published } = req.body;
+  const { title, body, is_published } = req.body;
   const user_id = 1;
-  const str = `${user_id}, ${title}, ${body}, ${slug}, ${is_published}`;
-  if (user_id) {
-    mysqlConnection.query(query(4, str), (err, rows, fields) => {
-      if (!err) {
-        res.status(201).json(rows);
-      } else {
-        res.status(500).json(err.code);
+  if (user_id === 1) {
+    console.log(user_id, title, body, `-`, is_published);
+    mysqlConnection.query(
+      query(4, ``),
+      [user_id, title, body, `-`, is_published],
+      (err, rows, fields) => {
+        if (!err) {
+          res.status(201).json(rows);
+        } else {
+          res.status(500).json(err.code);
+        }
       }
-    });
+    );
   } else {
     res.status(401).json(`unauthorized`);
   }
 });
 
 router.put(`/posts/:id`, (req, res) => {
-  const { title, body, slug, is_published } = req.body;
+  const { title, body, slug } = req.body;
   const user_id = 1;
   const { id } = req.params;
-  if (user_id) {
+  if (user_id === 1) {
     mysqlConnection.query(
       query(5, ``),
-      [title, body, slug, is_published, user_id, id],
+      [title, body, slug, true, user_id, id],
       (err, rows, fields) => {
         if (!err) {
           res.status(204).json(rows);
@@ -124,7 +128,7 @@ router.put(`/posts/:id`, (req, res) => {
 router.delete(`/posts/:id`, (req, res) => {
   const user_id = 1;
   const { id } = req.params;
-  if (user_id) {
+  if (user_id === 1) {
     mysqlConnection.query(query(6, ``), [user_id, id], (err, rows, fields) => {
       if (!err) {
         res.status(204).json(rows);
